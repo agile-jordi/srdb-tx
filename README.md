@@ -1,5 +1,8 @@
 # SRDB TX: Scala Transaction Abstraction
 
+[![Build Status](https://travis-ci.org/agile-jordi/srdb-tx.svg)](https://travis-ci.org/agile-jordi/srdb-tx)
+[![Coverage Status](https://coveralls.io/repos/agilogy/srdb-tx/badge.svg)](https://coveralls.io/r/agilogy/srdb-tx)
+
 This is a Work In Progress...
 
 ## TO-DO

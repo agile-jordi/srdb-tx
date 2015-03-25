@@ -4,7 +4,7 @@ organization := "com.agilogy"
 
 name := "srdb-tx"
 
-version := "1.0.0-SNAPSHOT"
+version := "1.0.0"
 
 crossScalaVersions := Seq("2.10.4","2.11.5")
 

@@ -11,7 +11,7 @@ version := "1.0.0"
 
 scalaVersion := "2.11.6"
 
-crossScalaVersions := Seq("2.10.4","2.11.6")
+crossScalaVersions := Seq("2.10.4", "2.11.6")
 
 libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41" % "test",
@@ -34,19 +34,40 @@ scalacOptions ++= Seq(
   "-language:higherKinds",
   "-language:implicitConversions",
   "-unchecked",
-//  "-Xfatal-warnings",
   "-Xlint",
   "-Yno-adapted-args",
-  "-Ywarn-dead-code",        // N.B. doesn't work well with the ??? hole
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
-  "-Xfuture",
-  "-Ywarn-unused-import",     // 2.11 only
-  "-P:linter:disable:PreferIfToBooleanMatch"
+  "-Xfuture"
 )
 
-// https://gist.github.com/leifwickland/3e4bf79562ce0a963bc8
-wartremoverErrors in (Compile, compile) ++= Warts.allBut(Wart.DefaultArguments, Wart.MutableDataStructures)
+// Execute static analysis via `lint:compile`
+val LintTarget = config("lint").extend(Compile)
+
+inConfig(LintTarget) {
+
+  Defaults.compileSettings ++
+    Seq(
+      sources in LintTarget := {
+        val lintSources = (sources in LintTarget).value
+        lintSources ++ (sources in Compile).value
+      },
+      scalacOptions in LintTarget ++= Seq(
+        "-Xfatal-warnings",
+        "-Ywarn-unused-import",
+        "-Ywarn-dead-code",
+        "-P:linter:disable:PreferIfToBooleanMatch"
+      ),
+      wartremoverErrors ++= Warts.allBut(Wart.DefaultArguments, Wart.MutableDataStructures)
+    )
+}
+
+scalacOptions in Compile := (scalacOptions in Compile).value filterNot { switch =>
+  switch.startsWith("-P:wartremover:") ||
+    "^-Xplugin:.*/org[.]brianmckenna/.*wartremover.*[.]jar$".r.pattern.matcher(switch).find ||
+    switch.startsWith("-P:linter:") ||
+    "^-Xplugin:.*/com[.]foursquare[.]lint/.*linter.*[.]jar$".r.pattern.matcher(switch).find
+}
 
 resolvers += "Linter Repository" at "https://hairyfotr.github.io/linteRepo/releases"
 
@@ -64,7 +85,7 @@ publishMavenStyle := false
 
 // --> bintray
 
-seq(bintrayPublishSettings:_*)
+seq(bintrayPublishSettings: _*)
 
 repository in bintray := "scala"
 
@@ -72,6 +93,6 @@ bintrayOrganization in bintray := Some("agilogy")
 
 packageLabels in bintray := Seq("scala")
 
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+licenses +=("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 // <-- bintray

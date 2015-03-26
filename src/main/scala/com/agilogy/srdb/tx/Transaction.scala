@@ -9,19 +9,19 @@ sealed trait TransactionConfig
 
 case object NewTransaction extends TransactionConfig
 
-class Transaction(val conn: Connection) extends TransactionConfig{
+class Transaction(val conn: Connection) extends TransactionConfig {
 
-  protected[this] var commitCallbacks: ListBuffer[() => Unit] = new ListBuffer()
+  protected[this] val commitCallbacks: ListBuffer[() => Unit] = new ListBuffer()
 
   def onCommit(f: () => Unit): Unit = {
-    commitCallbacks += f
+    commitCallbacks.append(f)
   }
 
   conn.setAutoCommit(false)
 
   private[tx] def isClosed = conn.isClosed
 
-  private[tx] def commit() {
+  private[tx] def commit(): Unit = {
     {
       try {
         if (conn.isClosed) throw new IllegalStateException("Connection already closed")
@@ -33,7 +33,7 @@ class Transaction(val conn: Connection) extends TransactionConfig{
     commitCallbacks.foreach(f => f())
   }
 
-  private def close() {
+  private def close(): Unit = {
     try {
       if (!conn.isClosed) conn.close()
     } catch {
@@ -41,7 +41,7 @@ class Transaction(val conn: Connection) extends TransactionConfig{
     }
   }
 
-  def rollback() {
+  def rollback(): Unit = {
     {
       try {
         if (!conn.isClosed) conn.rollback()
@@ -51,17 +51,16 @@ class Transaction(val conn: Connection) extends TransactionConfig{
     }
   }
 
-  def withSavepoint[T](f: => T)(catchBlock:PartialFunction[Exception,T]):T = {
+  def withSavepoint[T](f: => T)(catchBlock: PartialFunction[Exception, T]): T = {
     val savepoint = this.conn.setSavepoint()
-    try{
+    try {
       f
-    }catch{
+    } catch {
       case e: Exception if catchBlock.isDefinedAt(e) =>
         this.conn.rollback(savepoint)
         catchBlock(e)
     }
   }
-
 
 }
 

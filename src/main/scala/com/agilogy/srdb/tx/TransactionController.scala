@@ -2,10 +2,9 @@ package com.agilogy.srdb.tx
 
 import javax.sql.DataSource
 
-class TransactionController(ds:DataSource) {
+class TransactionController(ds: DataSource) {
 
   def inTransaction[T](f: Transaction => T)(implicit config: TransactionConfig): T = {
-    require(config != null, "Don't ever use null again, please!")
     val (txCreated, tx) = config match {
       case NewTransaction => (true, Transaction(ds))
       case tx: Transaction => (false, tx)

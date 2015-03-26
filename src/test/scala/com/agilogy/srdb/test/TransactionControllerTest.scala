@@ -3,9 +3,9 @@ package com.agilogy.srdb.test
 import java.sql.Connection
 import javax.sql.DataSource
 
-import com.agilogy.srdb.tx.{TransactionConfig, NewTransaction, TransactionController, Transaction}
+import com.agilogy.srdb.tx.{ TransactionConfig, NewTransaction, TransactionController, Transaction }
 import org.scalamock.Defaultable.defaultUnit
-import org.scalamock.{MockFunction1, MockFunction0}
+import org.scalamock.{ MockFunction1, MockFunction0 }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 
@@ -17,7 +17,6 @@ class TransactionControllerTest extends FlatSpec with MockFactory {
   val ds = mock[DataSource]
   val txController = new TransactionController(ds)
 
-
   it should "execute an empty transaction" in {
     (conn.isClosed _).expects().anyNumberOfTimes()
     inSequence {
@@ -26,7 +25,7 @@ class TransactionControllerTest extends FlatSpec with MockFactory {
       (conn.commit _).expects()
       (conn.close _).expects()
     }
-    txController.inTransaction { tx =>}(NewTransaction)
+    txController.inTransaction { tx => }(NewTransaction)
   }
 
   it should "abort a transaction when a exception is thrown and return such exception" in {
@@ -46,16 +45,16 @@ class TransactionControllerTest extends FlatSpec with MockFactory {
     assert(exc.getMessage === "foo")
   }
 
-  def f1(txConfig:TransactionConfig):String = {
+  def f1(txConfig: TransactionConfig): String = {
     txController.inTransaction(tx => "foo")(txConfig)
   }
 
-  def f2(txConfig:TransactionConfig):String = {
+  def f2(txConfig: TransactionConfig): String = {
     txController.inTransaction(tx => f1(tx) + "bar")(txConfig)
 
   }
 
-  it should "propagate transactions" in{
+  it should "propagate transactions" in {
     (conn.isClosed _).expects().anyNumberOfTimes()
     inSequence {
       (() => ds.getConnection).expects().returns(conn)

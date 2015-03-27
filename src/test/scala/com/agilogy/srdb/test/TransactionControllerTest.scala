@@ -3,9 +3,8 @@ package com.agilogy.srdb.test
 import java.sql.Connection
 import javax.sql.DataSource
 
-import com.agilogy.srdb.tx.{ TransactionConfig, NewTransaction, TransactionController, Transaction }
+import com.agilogy.srdb.tx.{ NewTransaction, TransactionConfig, TransactionController }
 import org.scalamock.Defaultable.defaultUnit
-import org.scalamock.{ MockFunction1, MockFunction0 }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 
@@ -63,6 +62,23 @@ class TransactionControllerTest extends FlatSpec with MockFactory {
       (conn.close _).expects()
     }
     assert(f2(NewTransaction) === "foobar")
+  }
+
+  it should "rollback the transaction (just once) if an exception is thrown" in {
+    (conn.isClosed _).expects().anyNumberOfTimes()
+    inSequence {
+      (() => ds.getConnection).expects().returns(conn)
+      (conn.setAutoCommit _).expects(false)
+      (() => conn.rollback).expects()
+      (conn.close _).expects()
+    }
+    val re = intercept[RuntimeException] {
+      txController.inTransaction {
+        tx =>
+          txController.inTransaction(tx2 => throw new RuntimeException("ouch!"))(tx)
+      }(NewTransaction)
+    }
+    assert(re.getMessage === "ouch!")
   }
 
 }

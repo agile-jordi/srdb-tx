@@ -12,7 +12,9 @@ object TransactionController {
   def inTransaction[T](ds: DataSource)(f: Transaction => T)(implicit config: TransactionConfig): T = {
     val (txCreated, tx) = config match {
       case NewTransaction => (true, Transaction(ds))
-      case tx: Transaction => (false, tx)
+      case tx: Transaction =>
+        if (tx.isClosed) throw new IllegalStateException("Transaction already closed")
+        (false, tx)
     }
     try {
       val res = f(tx)

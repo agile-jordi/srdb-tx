@@ -24,7 +24,7 @@ class Transaction(val conn: Connection) extends TransactionConfig {
   private[tx] def commit(): Unit = {
     {
       try {
-        if (conn.isClosed) throw new IllegalStateException("Connection already closed")
+        require(!conn.isClosed, "Can't commit a closed connection")
         conn.commit()
       } finally {
         close()

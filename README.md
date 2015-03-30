@@ -13,7 +13,7 @@ A small library to represent transaction demarcation and propagation programmati
 ```
 resolvers += Resolver.url("Agilogy Scala",url("http://dl.bintray.com/agilogy/scala/"))(Resolver.ivyStylePatterns)
 
-libraryDependencies += "com.agilogy" %% "srdb-tx" % "1.0.0"
+libraryDependencies += "com.agilogy" %% "srdb-tx" % "1.0.1"
 ```
 
 ## Usage

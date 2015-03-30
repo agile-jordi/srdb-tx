@@ -7,7 +7,7 @@ organization := "com.agilogy"
 
 name := "srdb-tx"
 
-version := "1.0.1-SNAPSHOT"
+version := "1.0.1"
 
 scalaVersion := "2.11.6"
 

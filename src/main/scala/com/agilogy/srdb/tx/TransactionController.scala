@@ -2,6 +2,8 @@ package com.agilogy.srdb.tx
 
 import javax.sql.DataSource
 
+import scala.util.control.NonFatal
+
 class TransactionController(ds: DataSource) {
 
   def inTransaction[T](f: Transaction => T)(implicit config: TransactionConfig): T = TransactionController.inTransaction(ds)(f)
@@ -24,7 +26,12 @@ object TransactionController {
     } catch {
       case t: Throwable =>
         if (txCreated) {
-          tx.rollback()
+          try {
+            tx.rollback()
+          } catch {
+            case NonFatal(re) =>
+              re.printStackTrace
+          }
         }
         throw t
     }

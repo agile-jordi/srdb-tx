@@ -9,9 +9,9 @@ name := "srdb-tx"
 
 version := "1.0.1"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
-crossScalaVersions := Seq("2.10.4", "2.11.6")
+crossScalaVersions := Seq("2.10.6", "2.11.7")
 
 libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41" % "test",
@@ -71,7 +71,7 @@ scalacOptions in Compile := (scalacOptions in Compile).value filterNot { switch 
 
 resolvers += "Linter Repository" at "https://hairyfotr.github.io/linteRepo/releases"
 
-addCompilerPlugin("com.foursquare.lint" %% "linter" % "0.1.9")
+addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.12")
 
 scalastyleFailOnError := true
 

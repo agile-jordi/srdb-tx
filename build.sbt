@@ -7,19 +7,19 @@ organization := "com.agilogy"
 
 name := "srdb-tx"
 
-version := "1.0.2"
+version := "1.1.2"
 
 scalaVersion := "2.11.7"
 
-crossScalaVersions := Seq("2.10.6", "2.11.7")
+crossScalaVersions := Seq("2.10.6", "2.11.7","2.12.6")
 
 libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41" % "test",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test"
 )
 
-ScoverageSbtPlugin.ScoverageKeys.coverageExcludedPackages := "<empty>"
+coverageExcludedPackages := "<empty>"
 
 // --> Linters
 
@@ -71,7 +71,7 @@ scalacOptions in Compile := (scalacOptions in Compile).value filterNot { switch 
 
 resolvers += "Linter Repository" at "https://hairyfotr.github.io/linteRepo/releases"
 
-addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.12")
+addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
 scalastyleFailOnError := true
 

@@ -4,7 +4,6 @@ import java.sql.Connection
 import javax.sql.DataSource
 
 import com.agilogy.srdb.tx.{ NewTransaction, TransactionConfig, TransactionController }
-import org.scalamock.Defaultable.defaultUnit
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 

@@ -7,11 +7,11 @@ organization := "com.agilogy"
 
 name := "srdb-tx"
 
-version := "1.1"
+version := "1.2"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.13"
 
-crossScalaVersions := Seq("2.11.7","2.12.6")
+crossScalaVersions := Seq("2.11.7","2.12.13")
 
 libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41" % "test",

@@ -1,17 +1,17 @@
 import _root_.wartremover.WartRemover.autoImport._
-import bintray.Keys._
 import com.typesafe.sbt.SbtScalariform._
 import org.scalastyle.sbt.ScalastylePlugin._
+import com.gilcloud.sbt.gitlab.{GitlabCredentials,GitlabPlugin}
 
 organization := "com.agilogy"
 
 name := "srdb-tx"
 
-version := "1.1"
+version := "1.2"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.13"
 
-crossScalaVersions := Seq("2.10.6", "2.11.7","2.12.6")
+crossScalaVersions := Seq("2.11.7","2.12.13")
 
 libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41" % "test",
@@ -77,22 +77,20 @@ scalastyleFailOnError := true
 
 // <-- Linters
 
-// Reformat at every compile.
-// See https://github.com/sbt/sbt-scalariform
-scalariformSettings
+// --> gitlab
 
-publishMavenStyle := false
+GitlabPlugin.autoImport.gitlabGroupId := None
+GitlabPlugin.autoImport.gitlabProjectId := Some(26236490)
+GitlabPlugin.autoImport.gitlabDomain := "gitlab.com"
 
-// --> bintray
+GitlabPlugin.autoImport.gitlabCredentials := {
+    val token = sys.env.get("GITLAB_DEPLOY_TOKEN") match {
+        case Some(token) => token
+        case None =>
+            sLog.value.warn(s"Environment variable GITLAB_DEPLOY_TOKEN is undefined, 'publish' will fail.")
+            ""
+    }
+    Some(GitlabCredentials("Deploy-Token", token))
+}
 
-seq(bintrayPublishSettings: _*)
-
-repository in bintray := "scala"
-
-bintrayOrganization in bintray := Some("agilogy")
-
-packageLabels in bintray := Seq("scala")
-
-licenses +=("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
-
-// <-- bintray
+// <-- gitlab
